@@ -4,6 +4,7 @@ import Layout from '@/component/layout'
 import FilmList from './pages/film-list'
 import WordBook from './pages/word-book'
 import Fragment from './pages/fragment'
+import LoginModal from '@/component/loginModal'
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
           <Route path="/film" element={<Film />}></Route>
         </Routes>
       </BrowserRouter>
+      <LoginModal />
     </>
   )
 }
