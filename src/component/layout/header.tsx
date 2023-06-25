@@ -1,8 +1,11 @@
 import styled from '@emotion/styled'
 import { useLocation, useNavigate } from 'react-router-dom'
+import { observer } from "mobx-react-lite"
+import userStore from '@/store/user'
 
 function Header() {
   const { pathname } = useLocation()
+  const { setState } = userStore
   const navigate = useNavigate()
   function to(path: string) {
     if (path === pathname) return
@@ -15,14 +18,13 @@ function Header() {
         <span onClick={() => to('/word-book')}>单词本</span>
       </nav>
       <div className='login'>
-        登录
+        <span onClick={() => setState(true)}>登录</span>
       </div>
     </PcContainer>
-    
   </header>
 }
 
-export default Header
+export default observer(Header)
 
 const PcContainer = styled.div`
   width: 100%;
