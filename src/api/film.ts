@@ -21,3 +21,21 @@ export function getFragmentList(filmId: string) {
     url: `/api/film/${filmId}/fragment`,
   })
 } 
+
+export function getFragmentInfo(fragmentId: string) {
+  return useGetFetch<FragmentProp>({
+    url: `/api/film/fragment/${fragmentId}`
+  })
+}
+
+export interface CaptionProp {
+  start: number
+  end: number
+  cn: string
+  en: string
+}
+export function getCaption(fragmentId: string) {
+  return useGetFetch<CaptionProp[]>({
+    url: `/api/film/${fragmentId}/caption`
+  })
+}

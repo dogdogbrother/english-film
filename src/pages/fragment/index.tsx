@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { getFragmentList } from '@/api/film'
 import type { FragmentProp } from '@/api/film'
 import { useEffect, useState } from 'react'
@@ -12,6 +12,7 @@ videojs.addLanguage('zh-CN', zhLang)
 
 function Fragment() {
   const params = useParams()
+  const navigate = useNavigate()
   const [durations, setDurations] = useState<number[]>([])  // 列表的视频时长
   const [fragmentList, setFragmentList] = useState<FragmentProp[]>([])
   const { filmId = '' } = params
@@ -38,9 +39,12 @@ function Fragment() {
   useEffect(() => {
     getFragmentList(filmId).then(setFragmentList)
   }, [])
+  function toPlayer(fragmentId: string) {
+    navigate(`/film/${fragmentId}`)
+  }
   return <FragmentBox>
     {
-      fragmentList.map((fragment, index) => <li key={fragment.id}>
+      fragmentList.map((fragment, index) => <li onClick={() => toPlayer(fragment.id)} key={fragment.id}>
         <div className='video-box'>
           <video id={`player-${fragment.id}`} className='video-js'></video>
         </div>

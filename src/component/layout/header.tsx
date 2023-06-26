@@ -5,7 +5,7 @@ import userStore from '@/store/user'
 
 function Header() {
   const { pathname } = useLocation()
-  const { setState } = userStore
+  const { setState, username } = userStore
   const navigate = useNavigate()
   function to(path: string) {
     if (path === pathname) return
@@ -18,7 +18,13 @@ function Header() {
         <span onClick={() => to('/word-book')}>单词本</span>
       </nav>
       <div className='login'>
-        <span onClick={() => setState(true)}>登录</span>
+        {
+          username
+          ?
+          <span>{username}</span>
+          :
+          <span onClick={() => setState(true)}>登录</span>
+        }
       </div>
     </PcContainer>
   </header>

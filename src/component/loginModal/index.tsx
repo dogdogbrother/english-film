@@ -1,19 +1,20 @@
-import { Modal } from 'antd'
 import { observer } from "mobx-react-lite"
 import userStore from '@/store/user'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, message, Modal } from 'antd'
 import styled from '@emotion/styled'
 import { useState } from 'react'
 import type { LoginProp } from '@/api/user'
 
 function LoginModal() {
-  const { state } = userStore
+  const { state, login } = userStore
   const [form] = Form.useForm()
   const [loading, setLoading] = useState(false)
 
   function onFinish(values: LoginProp) {
-    console.log(values)
     setLoading(true)
+    login(values).then(() => {
+      message.success('登录成功')
+    }).finally(() => setLoading(false))
   }
   return <Modal destroyOnClose={true} width={340} style={{ top: 200 }} footer={false} open={state}>
     <FormBox>

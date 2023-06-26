@@ -17,7 +17,7 @@ function App() {
             <Route path="/word-book" element={<WordBook />} />
             <Route path="/fragment/:filmId" element={<Fragment />} />
           </Route>
-          <Route path="/film" element={<Film />}></Route>
+          <Route path="/film/:fragmentId" element={<Film />}></Route>
         </Routes>
       </BrowserRouter>
       <LoginModal />
