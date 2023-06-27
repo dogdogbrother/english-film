@@ -1,12 +1,12 @@
-import { useEffect, useState, useReducer } from 'react'
+import { useEffect, useState, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
 import { getFragmentInfo, getCaption } from '@/api/film'
 import type { CaptionProp } from '@/api/film'
 import videojs from 'video.js'
-// import Player from 'video.js/dist/types/player'
+import Player from 'video.js/dist/types/player'
 import zhLang from 'video.js/dist/lang/zh-CN.json'
 import 'video.js/dist/video-js.css'
-import Caption from './caption'
+import { useCaption } from './caption'
 
 videojs.addLanguage('zh-CN', zhLang)
 
@@ -15,10 +15,16 @@ function Film() {
   const { fragmentId } = params
   const [ captions, setCaptions ] = useState<CaptionProp[]>([])
   const [ playState, setPlayState ] = useState(false)
+  const player = useRef<Player>()
   const [ currentTime, setCurrentTime ] = useState(0)
   const [ duration, setDuration ] = useState(0)
   const { windowSize, setWindowSize } = useResize()
-  console.log(windowSize)
+  const { Caption, WordModal } = useCaption(fragmentId!, currentTime, setPlayer)
+  function setPlayer() {
+    if (!player.current?.paused()) {
+      player.current?.pause()
+    } 
+  }
   useEffect(() => {
     getFragmentInfo(fragmentId!).then(res => {
       initPlay(res.fragmentUrl)
@@ -26,7 +32,7 @@ function Film() {
     getCaption(fragmentId!).then(setCaptions)
   }, [])
   function initPlay(url: string) {
-    const player = videojs('fragment-play', {
+    const _player = videojs('fragment-play', {
       techOrder: ['html5'],
       controls: true,
       sources: [
@@ -35,19 +41,19 @@ function Film() {
         }
       ],
     })
-    player.on('play', () => {
+    _player.on('play', () => {
       setPlayState(true)
     })
-    player.on('pause', () => {
+    _player.on('pause', () => {
       setPlayState(false)
     })
-    player.on('loadedmetadata', () => {
+    _player.on('loadedmetadata', () => {
       // _height 和 _width 是视频的尺寸比例 和windows的窗口宽高算个比例出来
-      const viodeHeight = player.videoHeight()
-      const viodeWidth = player.videoWidth()
+      const viodeHeight = _player.videoHeight()
+      const viodeWidth = _player.videoWidth()
       setWindowSize({ viodeHeight, viodeWidth })
     })
-    player.on('timeupdate', (e: Event) => {
+    _player.on('timeupdate', (e: Event) => {
       const target =  e.target as any
       const { currentTime, duration: _duration  } = target.children[0] || {}
       setCurrentTime(currentTime)
@@ -55,10 +61,12 @@ function Film() {
         setDuration(_duration)
       }
     })
+    player.current = _player
   }
   return <div css={{position: 'relative'}}>
     <video css={{width: '100vw', height: '100vh'}} id='fragment-play' className='video-js'></video>
     <Caption windowSize={windowSize} />
+    <WordModal />
   </div>
 }
 
