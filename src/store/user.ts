@@ -1,5 +1,6 @@
-import { makeObservable, observable, action } from "mobx"
-import { login } from '@/api/user'
+import { makeObservable, observable, action, runInAction } from "mobx"
+import { login, getInfo } from '@/api/user'
+import wordStore from './word'
 
 class UserStore {
   state = false // 弹窗的状态
@@ -8,7 +9,8 @@ class UserStore {
     makeObservable(this, {
       state: observable,
       username: observable,
-      setState: action
+      setState: action,
+      getInfo: action
     })
   }
   setState = (state: boolean) => {
@@ -18,8 +20,16 @@ class UserStore {
     return login(form).then(res => {
       const { token, username } = res
       localStorage.setItem("token", token),
-      this.username = username
+      runInAction(() => this.username = username)
       this.setState(false)
+      wordStore.getCollectList()
+    })
+  }
+  getInfo = () => {
+    getInfo().then(res => {
+      const { username } = res
+      runInAction(() => this.username = username)
+      wordStore.getCollectList()
     })
   }
 }

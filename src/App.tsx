@@ -5,8 +5,10 @@ import FilmList from './pages/film-list'
 import WordBook from './pages/word-book'
 import Fragment from './pages/fragment'
 import LoginModal from '@/component/loginModal'
+import userStore from '@/store/user'
 
 function App() {
+  userStore.getInfo()
   return (
     <>
       <BrowserRouter>
