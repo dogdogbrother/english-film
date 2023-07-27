@@ -3,15 +3,17 @@ import { WindowSizeProp } from './index'
 import { getCaption } from '@/api/film'
 import type { CaptionProp } from '@/api/film'
 import { useState, useEffect, useMemo } from 'react'
-import { Modal, Spin } from 'antd'
-import { getWordTranslate, type TranslateProp } from '@/api/word'
+import { Modal, Spin, message } from 'antd'
+import { addCollect, getWordTranslate, type TranslateProp } from '@/api/word'
 import { delSymbol } from "@/utils/format";
-import { StarOutlined } from '@ant-design/icons'
+import { StarFilled, StarOutlined } from '@ant-design/icons'
+import wordStore from '@/store/word'
+
 interface Props {
   windowSize: WindowSizeProp
 }
 
-export function useCaption(fragmentId: string, currentTime: number, setPlayer: Function) {
+export function useCaption(fragmentId: string, currentTime: number, setPlayer: Function, filmId: string) {
   const [ captions, setCaptions ] = useState<CaptionProp[]>([])
   const [ state, setStatee ] = useState(false)
   const [ loading, setLoading ] = useState(false)
@@ -65,8 +67,18 @@ export function useCaption(fragmentId: string, currentTime: number, setPlayer: F
       <div className='cn'>{getTranslate()}</div>
     </CaptionBox>
   }
-  function WordModal() {
-    return <Modal  footer={null} style={{ top: 200 }} open={state} onCancel={close} width='600px'>
+  function collectWord(word: string) {
+    addCollect({
+      filmId,
+      word
+    }).then(() => {
+      message.success('收藏单词成功')
+      wordStore.getCollectList()
+    }).catch(() => message.error('收藏单词失败'))
+  }
+  // _prop 目的是触发视图更新
+  function WordModal(_prop: any) {
+    return <Modal footer={null} style={{ top: 200 }} open={state} onCancel={close} width='600px'>
       <ModalContent>
         {
           loading
@@ -76,9 +88,13 @@ export function useCaption(fragmentId: string, currentTime: number, setPlayer: F
           <div>
             <div className='word-header'>
               <h4>{ translate.word }</h4>
-              {/* <span>我是收藏start</span> */}
-              <StarOutlined style={{fontSize: '23px', color: '#666', cursor: 'pointer'}} />
-              {/* StarFilled */}
+              {
+                wordStore.collectList.find(item => item.word === translate.word) 
+                ?
+                <StarFilled style={{fontSize: '23px', color: '#ffa940', cursor: 'pointer'}} />
+                :
+                <StarOutlined onClick={() => collectWord(translate.word)} style={{fontSize: '23px', color: '#444', cursor: 'pointer'}} />
+              }
             </div>
             <div className='phonetic'>
               {
@@ -128,6 +144,9 @@ const CaptionBox = styled.div`
     span {
       margin: 0 0.55vw;
       cursor: pointer;
+    }
+    span:hover {
+      color: #ebd8d8;
     }
   }
   .cn {

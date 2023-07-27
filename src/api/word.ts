@@ -33,6 +33,7 @@ export interface CollectProp {
   filmId: string
   id: string
   word: string
+  youdao: any
 }
 export function getCollectList() {
   return useGetFetch<CollectProp[]>({

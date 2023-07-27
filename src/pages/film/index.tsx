@@ -1,25 +1,27 @@
 import { useEffect, useState, useReducer, useRef } from 'react'
 import { useParams } from 'react-router-dom'
-import { getFragmentInfo, getCaption } from '@/api/film'
-import type { CaptionProp } from '@/api/film'
+import { getFragmentInfo } from '@/api/film'
 import videojs from 'video.js'
 import Player from 'video.js/dist/types/player'
 import zhLang from 'video.js/dist/lang/zh-CN.json'
 import 'video.js/dist/video-js.css'
 import { useCaption } from './caption'
-
+import { observer } from "mobx-react-lite"
+import wordStore from '@/store/word'
+import { FloatButton } from 'antd'
+import { BarsOutlined } from '@ant-design/icons'
 videojs.addLanguage('zh-CN', zhLang)
 
 function Film() {
   const params = useParams()
   const { fragmentId } = params
-  const [ captions, setCaptions ] = useState<CaptionProp[]>([])
-  const [ playState, setPlayState ] = useState(false)
+  const [ filmId, setFilmId ] = useState('')
+  const [ _playState, setPlayState ] = useState(false)
   const player = useRef<Player>()
   const [ currentTime, setCurrentTime ] = useState(0)
   const [ duration, setDuration ] = useState(0)
   const { windowSize, setWindowSize } = useResize()
-  const { Caption, WordModal } = useCaption(fragmentId!, currentTime, setPlayer)
+  const { Caption, WordModal } = useCaption(fragmentId!, currentTime, setPlayer, filmId)
   function setPlayer() {
     if (!player.current?.paused()) {
       player.current?.pause()
@@ -28,8 +30,8 @@ function Film() {
   useEffect(() => {
     getFragmentInfo(fragmentId!).then(res => {
       initPlay(res.fragmentUrl)
+      setFilmId(res.filmId)
     })
-    getCaption(fragmentId!).then(setCaptions)
   }, [])
   function initPlay(url: string) {
     const _player = videojs('fragment-play', {
@@ -66,11 +68,12 @@ function Film() {
   return <div css={{position: 'relative'}}>
     <video css={{width: '100vw', height: '100vh'}} id='fragment-play' className='video-js'></video>
     <Caption windowSize={windowSize} />
-    <WordModal />
+    <WordModal collectList={wordStore.collectList} />
+    <FloatButton icon={<BarsOutlined />} />
   </div>
 }
 
-export default Film
+export default observer(Film)
 
 // 计算字幕所在的位置
 function useResize() {
