@@ -7,6 +7,7 @@ interface FetchProp {
   url: string,
   query?: StringifiableRecord
   data?: object
+  method?: 'delete'
 } 
 export function useGetFetch<ResProp = any>(config: FetchProp) {
   const { url, query = {} } = config
@@ -25,9 +26,9 @@ export function useGetFetch<ResProp = any>(config: FetchProp) {
 }
 
 export function usePostFetch<ResProp = any>(config: FetchProp) {
-  const { url, data = {} } = config
+  const { url, data = {}, method } = config
   return fetch(url, {
-    method: 'POST',
+    method: method || 'POST',
     body: JSON.stringify(data),
     headers: new Headers({
       'Authorization': `Bearer ${getToken()}`,

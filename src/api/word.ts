@@ -20,7 +20,6 @@ export function getWordTranslate(word: string) {
 interface AddCollectProp {
   word: string
   filmId: string
-  // keyWord: string
 }
 export function addCollect(data: AddCollectProp) {
   return usePostFetch({
@@ -28,7 +27,12 @@ export function addCollect(data: AddCollectProp) {
     data
   })
 }
-
+export function delCollect(word: string) {
+  return usePostFetch({
+    url: `/api/word/collect/${word}`,
+    method: 'delete',
+  })
+}
 export interface CollectProp {
   filmId: string
   id: string
