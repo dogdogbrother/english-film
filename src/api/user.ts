@@ -6,13 +6,13 @@ export interface LoginProp {
 }
 export function login(data: LoginProp) {
   return usePostFetch({
-    url: '/api/user/login',
+    url: '/user/login',
     data
   })
 }
 
 export function getInfo() {
   return useGetFetch({
-    url: '/api/user/info',
+    url: '/user/info',
   })
 }

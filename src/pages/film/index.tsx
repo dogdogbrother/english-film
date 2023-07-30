@@ -8,11 +8,14 @@ import 'video.js/dist/video-js.css'
 import { useCaption } from './caption'
 import { observer } from "mobx-react-lite"
 import wordStore from '@/store/word'
-import { FloatButton } from 'antd'
+import { Button, FloatButton, Popover, Select } from 'antd'
 import { BarsOutlined } from '@ant-design/icons'
+import { useNavigate } from "react-router-dom"
+
 videojs.addLanguage('zh-CN', zhLang)
 
 function Film() {
+  const navigate = useNavigate()
   const params = useParams()
   const { fragmentId } = params
   const [ filmId, setFilmId ] = useState('')
@@ -21,6 +24,16 @@ function Film() {
   const [ currentTime, setCurrentTime ] = useState(0)
   const [ duration, setDuration ] = useState(0)
   const { windowSize, setWindowSize } = useResize()
+  interface ControlPanelProp {
+    captionType: '1' | '2' | '3'
+    playbackRate: string
+    captionSize: '0.5' | '1' | '1.5'
+  }
+  const [ controlPanel, setControlPanel ] = useState<ControlPanelProp>({
+    captionType: '1', // 1 中英 2英 3无字幕
+    playbackRate: '1', // 倍速播放 0.25 0.5 0.75 1 1.25 1.5
+    captionSize: '1', // 字幕大小 0.5 1 1.5 
+  })
   const { Caption, WordModal } = useCaption(fragmentId!, currentTime, setPlayer, filmId)
   function setPlayer() {
     if (!player.current?.paused()) {
@@ -65,11 +78,93 @@ function Film() {
     })
     player.current = _player
   }
+  function handleCaptionType(captionType: string | string[]) {
+    setControlPanel({
+      ...controlPanel,
+      captionType: captionType as '1' | '2' | '3'
+    })
+  }
+  function handlePlaybackRates(playbackRate: string | string[]) {
+    setControlPanel({
+      ...controlPanel,
+      playbackRate: playbackRate as string
+    })
+    player.current!.playbackRate(Number(playbackRate))
+  }
+  function handleCaptionSize(captionSize: string | string[]) {
+    console.log(captionSize);
+    setControlPanel({
+      ...controlPanel,
+      captionSize: captionSize as '0.5' | '1' | '1.5'
+    })
+  }
+  function toHome() {
+    navigate('/film-list')
+  }
+  const MenuList = () => <ul css={{
+    'li': {
+      margin: '10px 0',
+      '> *': {
+        width: '140px'
+      }
+    }
+  }}>
+    <li>
+      <Select
+        value={controlPanel.captionType} 
+        onChange={handleCaptionType}
+        options={[
+          { value: '1', label: '中英' },
+          { value: '2', label: '英' },
+          { value: '3', label: '无字幕' },
+        ]}
+      >
+      </Select>
+      {/* 字幕类型选择 */}
+    </li>
+    <li>
+    <Select
+        value={controlPanel.playbackRate} 
+        onChange={handlePlaybackRates}
+        options={[
+          { value: '0.25', label: '0.25倍速' },
+          { value: '0.5', label: '0.5倍速' },
+          { value: '0.75', label: '0.75倍速' },
+          { value: '1', label: '1倍速' },
+          { value: '1.25', label: '1.25倍速' },
+          { value: '1.5', label: '1.5倍速' },
+        ]}
+      >
+      </Select>
+      {/* 倍速类型选择 */}
+    </li>
+    <li>
+      <Select
+        value={controlPanel.captionSize} 
+        onChange={handleCaptionSize}
+        options={[
+          { value: '0.5', label: '小字幕' },
+          { value: '1', label: '适中字幕' },
+          { value: '1.5', label: '大字幕' },
+        ]}
+      >
+      </Select>
+    </li>
+    <li>
+      <Button type='link' onClick={toHome}>首页</Button>
+    </li>
+  </ul>
   return <div css={{position: 'relative'}}>
     <video css={{width: '100vw', height: '100vh'}} id='fragment-play' className='video-js'></video>
-    <Caption windowSize={windowSize} />
+    <Caption 
+      windowSize={windowSize} 
+      captionSize={controlPanel.captionSize} 
+      captionType={controlPanel.captionType}
+    />
     <WordModal collectList={wordStore.collectList} />
-    <FloatButton icon={<BarsOutlined />} />
+    <Popover placement="rightBottom" content={MenuList} trigger="click">
+      <FloatButton icon={<BarsOutlined />} />
+    </Popover>
   </div>
 }
 

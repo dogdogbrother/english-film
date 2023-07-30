@@ -1,5 +1,8 @@
 import queryString, { StringifiableRecord } from 'query-string'
 
+// 本地环境和线上环境都是用api 本地连接线上的用 prod-api
+export const rootApi = import.meta.env.MODE == 'test' ? '/prod-api' : '/api'
+
 function getToken() {
   return localStorage.getItem('token')
 }
@@ -11,7 +14,7 @@ interface FetchProp {
 } 
 export function useGetFetch<ResProp = any>(config: FetchProp) {
   const { url, query = {} } = config
-  const api = queryString.stringifyUrl({url, query})
+  const api = rootApi + queryString.stringifyUrl({url, query})
   return fetch(api, {
     headers: new Headers({
       'Authorization': `Bearer ${getToken()}`
@@ -27,7 +30,7 @@ export function useGetFetch<ResProp = any>(config: FetchProp) {
 
 export function usePostFetch<ResProp = any>(config: FetchProp) {
   const { url, data = {}, method } = config
-  return fetch(url, {
+  return fetch(rootApi + url, {
     method: method || 'POST',
     body: JSON.stringify(data),
     headers: new Headers({

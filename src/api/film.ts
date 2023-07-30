@@ -7,7 +7,7 @@ export interface FilmProp {
 }
 export function getFilmList() {
   return useGetFetch<FilmProp[]>({
-    url: '/api/film/list',
+    url: '/film/list',
   })
 }
 
@@ -18,13 +18,13 @@ export interface FragmentProp {
 }
 export function getFragmentList(filmId: string) {
   return useGetFetch<FragmentProp[]>({
-    url: `/api/film/${filmId}/fragment`,
+    url: `/film/${filmId}/fragment`,
   })
 } 
 
 export function getFragmentInfo(fragmentId: string) {
   return useGetFetch<FragmentProp>({
-    url: `/api/film/fragment/${fragmentId}`
+    url: `/film/fragment/${fragmentId}`
   })
 }
 
@@ -36,6 +36,6 @@ export interface CaptionProp {
 }
 export function getCaption(fragmentId: string) {
   return useGetFetch<CaptionProp[]>({
-    url: `/api/film/${fragmentId}/caption`
+    url: `/film/${fragmentId}/caption`
   })
 }

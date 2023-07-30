@@ -13,7 +13,7 @@ export interface TranslateProp {
 }
 export function getWordTranslate(word: string) {
   return useGetFetch<TranslateProp>({
-    url: `/api/word/translate/${word}`
+    url: `/word/translate/${word}`
   })
 }
 
@@ -23,13 +23,13 @@ interface AddCollectProp {
 }
 export function addCollect(data: AddCollectProp) {
   return usePostFetch({
-    url: `/api/word/collect`,
+    url: `/word/collect`,
     data
   })
 }
 export function delCollect(word: string) {
   return usePostFetch({
-    url: `/api/word/collect/${word}`,
+    url: `/word/collect/${word}`,
     method: 'delete',
   })
 }
@@ -41,6 +41,6 @@ export interface CollectProp {
 }
 export function getCollectList() {
   return useGetFetch<CollectProp[]>({
-    url: `/api/word/collect`
+    url: `/word/collect`
   })
 }

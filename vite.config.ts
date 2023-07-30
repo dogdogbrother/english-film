@@ -18,6 +18,11 @@ export default defineConfig({
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, ""),
       },
+      "/prod-api": {
+        target: "http://www.freetoplay.cn/api",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/prod-api/, ""),
+      },
     }
   }
 })

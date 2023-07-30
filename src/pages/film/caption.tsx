@@ -11,8 +11,19 @@ import wordStore from '@/store/word'
 
 interface Props {
   windowSize: WindowSizeProp
+  captionSize: '0.5' | '1' | '1.5'
+  captionType: '1' | '2' | '3'
 }
-
+const enFontSizeMap = {
+  "0.5": '2',
+  "1": '3',
+  "1.5": '4',
+}
+const cnFontSizeMap = {
+  "0.5": '1.8',
+  "1": '2.6',
+  "1.5": '3.3',
+}
 export function useCaption(fragmentId: string, currentTime: number, setPlayer: Function, filmId: string) {
   const [ captions, setCaptions ] = useState<CaptionProp[]>([])
   const [ state, setStatee ] = useState(false)
@@ -57,14 +68,18 @@ export function useCaption(fragmentId: string, currentTime: number, setPlayer: F
     setStatee(false)
   }
   function Caption(props: Props) {
-    const { windowSize } = props
+    const { windowSize, captionSize, captionType } = props
     return <CaptionBox css={{
       left: `${windowSize.x! + 20}px`, 
       right: `${windowSize.x! + 20}px`, 
       bottom: `${windowSize.y! + 40}px`,
     }}>
-      <div className='en'>{getEnglish()}</div>
-      <div className='cn'>{getTranslate()}</div>
+      {
+        captionType !== '3' && <div className='en' css={{fontSize: `${enFontSizeMap[captionSize]}vw`}}>{getEnglish()}</div>
+      }
+      {
+        captionType === '1' && <div className='cn' css={{fontSize: `${cnFontSizeMap[captionSize]}vw`}}>{getTranslate()}</div>
+      }
     </CaptionBox>
   }
   function collectWord(word: string) {
@@ -141,7 +156,7 @@ const CaptionBox = styled.div`
   color: #fff;
   text-shadow: 2px 2px 5px #000;
   .en {
-    font-size: 3vw;
+    /* font-size: 3vw; */
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
@@ -158,7 +173,7 @@ const CaptionBox = styled.div`
   .cn {
     text-align: center;
     white-space: pre-wrap;
-    font-size: 2.4vw;
+    /* font-size: 2.4vw; */
   }
 `
 const ModalContent = styled.div`
