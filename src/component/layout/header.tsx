@@ -16,6 +16,7 @@ function Header() {
       <nav>
         <span onClick={() => to('/film-list')}>电影仓库</span>
         <span onClick={() => to('/word-book')}>单词本</span>
+        <span onClick={() => to('/memory')}>背单词</span>
       </nav>
       <div className='login'>
         {

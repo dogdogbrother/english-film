@@ -97,6 +97,7 @@ export function useCaption(fragmentId: string, currentTime: number, setPlayer: F
       wordStore.getCollectList()
     }).catch(() => message.error('取消收藏单词失败'))
   }
+  
   // _prop 目的是触发视图更新
   function WordModal(_prop: any) {
     return <Modal footer={null} style={{ top: 200 }} open={state} onCancel={close} width='600px'>
@@ -119,13 +120,13 @@ export function useCaption(fragmentId: string, currentTime: number, setPlayer: F
             </div>
             <div className='phonetic'>
               {
-                translate.ukPhonetic && <div>
+                translate.ukPhonetic && <div onClick={() => playPhonetic(translate.ukSpeech)}>
                   <span>英 | </span>
                   <span>{translate.usPhonetic}</span>
                 </div>
               }
               {
-                translate.usPhonetic && <div>
+                translate.usPhonetic && <div  onClick={() => playPhonetic(translate.usSpeech)}>
                   <span>美 | </span>
                   <span>{translate.usPhonetic}</span>
                 </div>
@@ -205,3 +206,8 @@ const ModalContent = styled.div`
     }
   }
 `
+// 发音
+function playPhonetic(speech: string) {
+  const audio = new Audio(speech)
+  audio.play()
+}

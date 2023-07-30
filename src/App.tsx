@@ -6,6 +6,7 @@ import WordBook from './pages/word-book'
 import Fragment from './pages/fragment'
 import LoginModal from '@/component/loginModal'
 import userStore from '@/store/user'
+import Memory from './pages/memory'
 
 function App() {
   userStore.getInfo()
@@ -18,6 +19,7 @@ function App() {
             <Route path="/film-list" element={<FilmList />} />
             <Route path="/word-book" element={<WordBook />} />
             <Route path="/fragment/:filmId" element={<Fragment />} />
+            <Route path="/memory" element={<Memory />} />
           </Route>
           <Route path="/film/:fragmentId" element={<Film />}></Route>
         </Routes>
